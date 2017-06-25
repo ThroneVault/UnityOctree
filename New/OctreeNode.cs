@@ -190,7 +190,7 @@ namespace UnityOctree
                 }
                 else
                 { //Removing a chained object
-                    if(obj.next != null)
+                    if (obj.next != null)
                         obj.next.previous = obj.previous;
                     obj.previous.next = obj.next;
                 }
@@ -238,38 +238,89 @@ namespace UnityOctree
                 return count;
             }
 
-            //Find the lowest node that fully contains the given bounds
-            private bool FindFittingNode(ref Vector3 center, ref Vector3 minBounds, ref Vector3 maxBounds, out OctreeNode node)
+
+
+            /// <summary>
+            /// Find a node that fully contains the given bounds
+            /// </summary>
+            public bool ContainingNode(ref Vector3 center, ref Vector3 minBounds, ref Vector3 maxBounds, out OctreeNode node)
             {
                 node = null;
-                if (!ContainsBounds(ref minBounds, ref maxBounds))
-                    return false;
-
-                OctreeNode childNode;
-                bool firstLoop = true;
-                //    while (nodes.TryGetValue(childCode, out childNode))
+                OctreeNode childNode = this;//Start here
+                int index;
+                while (true)
                 {
-                    //    if (!firstLoop && !childNode.ContainsBounds(ref minBounds, ref maxBounds))
-                    { //Doesn't fit in this node. Put it in the parent node. If it's the firstLoop, we already checked this.
-                      //             node = childNode.parent;
+                    if (!childNode.ContainsBounds(ref minBounds, ref maxBounds))
+                    { //Doesn't fit in this node. Put it in the parent node.
+                        if (childNode.childIndex == -1)
+                            return false;
+
+                        node = childNode.parent;
                         return true;
                     }
 
+                    index = childNode.BestFitChild(ref center);
                     if (!childNode.isLeaf)
-                    { //Drop down another level if we have a valid child
-                      //          childCode = ChildCode(childCode, childNode.BestFitChild(ref center));
+                    { //Drop down another level if we have children
+                        childNode = childNode.children[index];
                     }
                     else
-                    { //No children
+                    { //Place it here. No children
                         node = childNode;
                         return true;
                     }
-
-                    firstLoop = false;
                 }
-
-                return false;
             }
+            Stack<OctreeNode> nodes = new Stack<OctreeNode>();
+            /// <summary>
+            /// Get all nodes touching these bounds
+            /// </summary>
+            private bool GetIntersectingNodes(ref Vector3 minBounds, ref Vector3 maxBounds, out Stack<OctreeNode> nodes)
+            {
+                //Check this node
+                nodes = this.nodes;
+                bool found = false;
+                if (IntersectBounds(ref minBounds, ref maxBounds))
+                {
+                    nodes.Push(this);
+                    found = true;
+                }
+                if (isLeaf)
+                    return found;
+
+                //Check all children
+                OctreeNode childNode = this;//Start here
+                int index;
+                for (index = 0; index < 8; index++)
+                {
+                    childNode = children[index];
+                    if (childNode.GetIntersectingNodes(ref minBounds, ref maxBounds, out nodes))
+                        found = true;
+                }
+                return found;
+            }
+            Stack<OctreeObject<T>> objects = new Stack<OctreeObject<T>>();
+            private bool GetObjectsInNodes(Stack<OctreeNode> nodes, out Stack<OctreeObject<T>> objects)
+            {
+                objects = this.objects;
+                int nodeCount = nodes.Count;
+                bool found = false;
+                while (nodeCount > 0)
+                {
+                    OctreeNode curNode = nodes.Pop();
+                    OctreeObject<T> obj = curNode.firstObject;
+                    while (obj != null)
+                    {
+                        objects.Push(obj);
+                        found = true;
+                        obj = obj.next;
+                    }
+
+                    nodeCount--;
+                }
+                return found;
+            }
+
             /// <summary>
             /// Try to add an object, starting at this node
             /// </summary>
