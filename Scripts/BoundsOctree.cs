@@ -25,6 +25,9 @@ public class BoundsOctree<T> {
 	// The total amount of objects currently in the tree
 	public int Count { get; private set; }
 
+	// Gets the bounding box that contains the whole octree
+	public Bounds MaxBounds { get { return rootNode.Bounds; } }
+
 	// Root node of the octree
 	BoundsOctreeNode<T> rootNode;
 
@@ -172,10 +175,6 @@ public class BoundsOctree<T> {
 		//AddCollisionCheck(checkRay);
 		//#endif
 		rootNode.GetColliding(ref checkRay, collidingWith, maxDistance);
-	}
-
-	public Bounds GetMaxBounds() {
-		return rootNode.GetBounds();
 	}
 
 	/// <summary>

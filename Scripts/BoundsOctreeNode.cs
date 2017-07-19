@@ -9,6 +9,9 @@ public class BoundsOctreeNode<T> {
 
 	// Length of this node if it has a looseness of 1.0
 	public float BaseLength { get; private set; }
+	
+	// Gets the bounding box that contains this node
+	public Bounds Bounds { get { return bounds; } }
 
 	// Looseness value for this node
 	float looseness;
@@ -242,10 +245,6 @@ public class BoundsOctreeNode<T> {
 		}
 
 		children = childOctrees;
-	}
-
-	public Bounds GetBounds() {
-		return bounds;
 	}
 
 	/// <summary>

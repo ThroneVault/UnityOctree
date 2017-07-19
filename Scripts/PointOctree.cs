@@ -18,6 +18,15 @@ public class PointOctree<T> where T : class {
 	// The total amount of objects currently in the tree
 	public int Count { get; private set; }
 
+	// Gets the bounding box that contains the whole octree
+	public Bounds MaxBounds {
+		get {
+			return new Bounds(
+				rootNode.Center, 
+				new Vector3(rootNode.SideLength, rootNode.SideLength, rootNode.SideLength));
+		}
+	}
+
 	// Root node of the octree
 	PointOctreeNode<T> rootNode;
 
