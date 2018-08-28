@@ -26,6 +26,9 @@ public class BoundsOctree<T> {
 	// The total amount of objects currently in the tree
 	public int Count { get; private set; }
 
+	// Gets the bounding box that contains the whole octree
+	public Bounds MaxBounds { get { return rootNode.Bounds; } }
+
 	// Root node of the octree
 	BoundsOctreeNode<T> rootNode;
 
@@ -181,10 +184,6 @@ public class BoundsOctree<T> {
 		var list = new List<T>();
 		rootNode.GetWithinFrustum(planes, list);
 		return list;
-	}
-
-	public Bounds GetMaxBounds() {
-		return rootNode.GetBounds();
 	}
 
 	/// <summary>
