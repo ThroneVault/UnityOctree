@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+
 // A Dynamic, Loose Octree for storing any objects that can be described with AABB bounds
 // See also: PointOctree, where objects are stored as single points and some code can be simplified
 // Octree:	An octree is a tree data structure which divides 3D space into smaller partitions (nodes)
