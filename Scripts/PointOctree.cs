@@ -133,7 +133,7 @@ public class PointOctree<T> where T : class {
 	/// <returns>True if items are found, false if not</returns>
 	public bool GetNearbyNonAlloc(Vector3 position, float maxDistance, List<T> nearBy) {
 		nearBy.Clear();
-		rootNode.GetNearby(ref position, ref maxDistance, nearBy);
+		rootNode.GetNearby(ref position, maxDistance, nearBy);
 		if (nearBy.Count > 0)
 			return true;
 		return false;
