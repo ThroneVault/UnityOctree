@@ -77,7 +77,8 @@ public class BoundsOctreeNode<T> {
 		bool removed = false;
 
 		for (int i = 0; i < objects.Count; i++) {
-			if (objects[i].Obj.Equals(obj)) {
+			if (objects[i].Obj.Equals(obj)) 
+			{
 				objects.RemoveAt(i);
 				removed = true;
 				break;
@@ -605,7 +606,6 @@ public class BoundsOctreeNode<T> {
 				if (children[i].HasAnyObjects()) return true;
 			}
 		}
-
 		return false;
 	}
 }
